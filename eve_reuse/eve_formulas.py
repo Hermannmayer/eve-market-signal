@@ -6,7 +6,7 @@ EVE Online 游戏公式常量。
 - 贸易: https://wiki.eveuniversity.org/Trade
 """
 
-from core.constants import (
+from eve_reuse.constants import (
     HUB_NAMES,  # noqa: F401 — re-export
     TRADE_HUB_IDS,
 )
@@ -60,11 +60,21 @@ _MINERAL_NAMES.update(_RACE_ME)
 
 
 def resolve_item_name(c, type_id: int) -> str:
-    """统一物品名称解析：item 表 → 矿物硬编码 → str(id)"""
+    """统一物品名称解析：reference.db item 表 → 矿物硬编码 → str(id)"""
     if type_id in _MINERAL_NAMES:
         return _MINERAL_NAMES[type_id]
-    nrow = c.execute("SELECT zh_name, en_name FROM item WHERE type_id = ?", (type_id,)).fetchone()
-    return (nrow[0] or nrow[1]) if nrow else str(type_id)
+    try:
+        # 查 reference.db item 表
+        nrow = c.execute("SELECT zh_name, en_name FROM item WHERE type_id = ?", (type_id,)).fetchone()
+        if nrow and (nrow[0] or nrow[1]):
+            return nrow[0] or nrow[1]
+        # 查缓存表
+        crow = c.execute("SELECT en_name FROM name_cache WHERE type_id = ?", (type_id,)).fetchone()
+        if crow and crow[0]:
+            return crow[0]
+    except Exception:
+        pass
+    return str(type_id)
 
 
 def _mat_name(mat_id: int, c) -> str:

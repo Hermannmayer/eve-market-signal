@@ -1,7 +1,11 @@
 # Database
-depth.db
+*.db
 *.db-wal
 *.db-shm
+*.db-journal
+
+# Data (SDE zip + YAML caches)
+data/
 
 # Python
 __pycache__/
@@ -20,3 +24,9 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Test cache
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
