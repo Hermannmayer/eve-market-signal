@@ -1,6 +1,6 @@
 # EVE Market Signal
 
-EVE Online 市场量化信号桌面端。独立的数据管道，不依赖其他项目。
+EVE Online 市场量化信号桌面端。
 
 ## 功能
 
